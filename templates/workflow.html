@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Crop Prediction Wizard · OptiCrop{% endblock %}
+{% block description %}Step-by-step crop prediction: location, weather, soil upload, and AI recommendation.{% endblock %}
+
+{% block content %}
+<div class="container wizard-page py-4 py-lg-5">
+  <!-- Wizard form (steps 1–3) -->
+  <div id="wizardShell">
+    <a href="{{ url_for('index') }}" class="btn btn-link text-success text-decoration-none mb-3 px-0" id="wizardBackLink">
+      <i class="bi bi-arrow-left"></i> Back to dashboard
+    </a>
+
+    <div class="wizard-progress mb-4" id="wizardProgress">
+      {% set step_labels = ['Location', 'Upload', 'Process'] %}
+      {% for n in range(1, 4) %}
+      <div class="wizard-progress-step" data-step="{{ n }}">
+        <span class="wizard-progress-dot">{{ n }}</span>
+        <span class="wizard-progress-label d-none d-md-inline">{{ step_labels[n - 1] }}</span>
+      </div>
+      {% if not loop.last %}<div class="wizard-progress-line"></div>{% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="wizard-card glass-card p-4 p-md-5">
+      <div id="wizardAlert" class="alert alert-danger d-none" role="alert"></div>
+
+    <!-- Step 1: Location + Live Weather -->
+    <section class="wizard-step active" data-step="1">
+      <div class="wizard-step-header">
+        <span class="wizard-step-icon">📍</span>
+        <div>
+          <h2 class="wizard-step-title">Step 1: Location &amp; Live Weather</h2>
+          <p class="wizard-step-subtitle">Search your village or city — weather updates automatically</p>
+        </div>
+      </div>
+
+      <div class="location-search-wrap mt-3">
+        <label class="form-label small fw-semibold" for="locationSearch">Search Location</label>
+        <input type="text" class="form-control" id="locationSearch" placeholder="e.g. Kosigi, Kurnool, Andhra Pradesh" autocomplete="off">
+        <ul class="location-dropdown list-unstyled d-none" id="locationDropdown"></ul>
+      </div>
+
+      <input type="hidden" id="village">
+      <input type="hidden" id="city">
+      <input type="hidden" id="district">
+      <input type="hidden" id="state">
+      <input type="hidden" id="lat">
+      <input type="hidden" id="lon">
+
+      <div id="selectedLocationBox" class="wizard-info-box mt-3 d-none">
+        <p class="small fw-semibold mb-1">Selected Location</p>
+        <p id="selectedLocationLabel" class="mb-0 fw-semibold text-success"></p>
+      </div>
+
+      <div id="weatherBox" class="mt-4 d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h3 class="h6 fw-bold mb-0">🌦 Live Weather</h3>
+          <span class="badge text-bg-success" id="weatherLiveBadge">Live</span>
+        </div>
+        <p id="weatherSource" class="small text-muted mb-3"></p>
+        <div class="row g-3">
+          <div class="col-sm-4">
+            <label class="form-label small fw-semibold">Temperature (°C)</label>
+            <input type="number" step="any" class="form-control env-field" id="temperature" readonly>
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label small fw-semibold">Humidity (%)</label>
+            <input type="number" step="any" class="form-control env-field" id="humidity" readonly>
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label small fw-semibold">Rainfall (mm)</label>
+            <input type="number" step="any" class="form-control env-field" id="rainfall" readonly>
+          </div>
+        </div>
+      </div>
+      <div id="weatherLoading" class="text-center py-3 d-none">
+        <div class="spinner-border spinner-border-sm text-success"></div>
+        <span class="ms-2 small text-muted">Fetching live weather…</span>
+      </div>
+      <p id="step1Ready" class="small text-success fw-semibold mt-3 mb-0 d-none">
+        <i class="bi bi-check-circle-fill"></i> Location &amp; weather ready — click Next to continue
+      </p>
+    </section>
+
+    <!-- Step 2: Upload + Validation -->
+    <section class="wizard-step" data-step="2">
+      <div class="wizard-step-header">
+        <span class="wizard-step-icon">📄</span>
+        <div>
+          <h2 class="wizard-step-title">Step 2: Upload Soil Information</h2>
+          <p class="wizard-step-subtitle">Upload any soil-related file, analyze nutrients, and combine with live weather for accurate crop prediction</p>
+        </div>
+      </div>
+      <div class="wizard-info-box mt-3">
+        <label class="form-label small fw-semibold" for="soilFile">Upload Soil Test Report</label>
+        <input type="file" class="form-control" id="soilFile" accept="*/*">
+        <p class="small text-muted mt-2 mb-0">
+          You can upload CSV, image, PDF, JSON, text, or other file types. The system analyzes file content and combines it with live weather.
+        </p>
+        <p class="small text-muted mb-0">
+          Soil report from: Soil Testing Laboratory · Government Soil Health Card · Agriculture Department
+        </p>
+      </div>
+      <p id="uploadStatus" class="small text-success mt-3 mb-0 d-none"></p>
+      <p id="extractedSoil" class="small text-muted mt-2 mb-0 d-none"></p>
+
+      <div id="validationBlock" class="mt-4 d-none">
+        <h3 class="h6 fw-bold text-success mb-3">✅ Input Validation</h3>
+        <ul class="validation-list" id="validationList">
+          <li data-check="file"><i class="bi bi-circle"></i> File uploaded successfully</li>
+          <li data-check="format"><i class="bi bi-circle"></i> File format is supported</li>
+          <li data-check="extract"><i class="bi bi-circle"></i> Soil values extracted from report</li>
+          <li data-check="numeric"><i class="bi bi-circle"></i> Numeric values are valid</li>
+          <li data-check="range"><i class="bi bi-circle"></i> Values are within acceptable range</li>
+          <li data-check="missing"><i class="bi bi-circle"></i> No missing critical values</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Step 3: Preprocessing -->
+    <section class="wizard-step" data-step="3">
+      <div class="wizard-step-header">
+        <span class="wizard-step-icon">⚙️</span>
+        <div>
+          <h2 class="wizard-step-title">Step 3: Data Preprocessing</h2>
+          <p class="wizard-step-subtitle">Prepares your soil &amp; climate data for the Random Forest model</p>
+        </div>
+      </div>
+      <ul class="process-list mt-4" id="preprocessList">
+        <li><i class="bi bi-circle"></i> Extracts values from report</li>
+        <li><i class="bi bi-circle"></i> Cleans input data</li>
+        <li><i class="bi bi-circle"></i> Formats data</li>
+        <li><i class="bi bi-circle"></i> Handles missing values</li>
+        <li><i class="bi bi-circle"></i> Creates feature vector</li>
+      </ul>
+      <div class="progress mt-3 d-none" id="preprocessBar"><div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width:0%"></div></div>
+      <p id="step3Ready" class="small text-success fw-semibold mt-3 mb-0 d-none">
+        <i class="bi bi-check-circle-fill"></i> Preprocessing complete — click Submit to get crop recommendations
+      </p>
+    </section>
+
+    <div class="wizard-nav d-flex justify-content-between mt-4 pt-3 border-top">
+      <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="btnBack" disabled>
+        <i class="bi bi-arrow-left"></i> Back
+      </button>
+      <button type="button" class="btn btn-hero-primary rounded-pill px-4" id="btnNext">
+        Next <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+    </div>
+  </div>
+
+  <!-- Full-page results (shown after Submit) -->
+  <div id="resultsPage" class="results-page d-none">
+    <div id="resultsLoading" class="results-loading text-center py-5">
+      <div class="spinner-border text-success mb-3" role="status"></div>
+      <h2 class="h5 fw-bold text-success">Analyzing your field data…</h2>
+      <p class="text-muted mb-0">Random Forest model is finding the best crops for your soil &amp; climate</p>
+    </div>
+    <div id="resultsContent" class="d-none"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.OPTICROP_MODEL_READY = {{ 'true' if model_ready else 'false' }};
+</script>
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

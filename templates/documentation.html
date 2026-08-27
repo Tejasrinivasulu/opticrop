@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Project Documentation · OptiCrop{% endblock %}
+{% block description %}Project portal with brainstorming, requirements, design, planning, development, testing, documentation, and demo walkthrough.{% endblock %}
+
+{% block content %}
+<section class="container py-3 py-lg-4 documentation-page">
+  <div class="row g-3">
+    <aside class="col-lg-3 col-xl-3">
+      <div class="doc-sidebar doc-portal-sidebar">
+        <h2 class="doc-sidebar-title mb-3">PROJECT PORTAL</h2>
+        <nav class="doc-nav">
+          {% for group in doc_groups %}
+            <div class="doc-group">
+              <p class="doc-group-title mb-1">{{ group.title }}</p>
+              <div class="doc-sub-nav">
+                {% for slug, label in group["items"] %}
+                  <a class="doc-sub-link {% if slug == current_slug %}active{% endif %}" href="{{ url_for('documentation_detail', doc_slug=slug) }}">{{ label }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </nav>
+      </div>
+    </aside>
+
+    <div class="col-lg-9 col-xl-9">
+      <article class="doc-detail-card">
+        <div class="doc-detail-head">
+          <p class="doc-breadcrumb mb-2">
+            Project Portal <span>/</span> {{ current_group.title }} <span>/</span> {{ current_doc.title }}
+          </p>
+          <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+            <h1 class="doc-detail-title mb-0">{{ current_doc.title }}</h1>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="copyDocBtn">
+              <i class="bi bi-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="doc-detail-content pt-3 mt-3 border-top" id="docContent">
+          {% for section in current_sections %}
+            <section class="doc-detail-section">
+              <h3>{{ loop.index }}. {{ section.title }}</h3>
+              <p>{{ section.body }}</p>
+
+              {% if section.highlight %}
+                <div class="doc-highlight-box">
+                  <strong>Important Highlight:</strong> {{ section.highlight }}
+                </div>
+              {% endif %}
+
+              {% if section.points %}
+                <ul class="doc-points">
+                  {% for point in section.points %}
+                    <li>{{ point }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {% if section.diagram %}
+                <div class="doc-diagram-wrap">
+                  <p class="doc-diagram-title">Flow / Diagram</p>
+                  <pre class="doc-diagram">{{ section.diagram }}</pre>
+                </div>
+              {% endif %}
+
+              {% if section.code %}
+                <div class="doc-code-wrap">
+                  <p class="doc-code-title">Reference Snippet</p>
+                  <pre class="doc-code"><code>{{ section.code }}</code></pre>
+                </div>
+              {% endif %}
+            </section>
+          {% endfor %}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const copyBtn = document.getElementById("copyDocBtn");
+    const content = document.getElementById("docContent");
+    if (!copyBtn || !content) return;
+
+    copyBtn.addEventListener("click", async () => {
+      const text = content.innerText.trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.innerHTML = '<i class="bi bi-check2"></i> Copied';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="bi bi-copy"></i> Copy';
+        }, 1400);
+      } catch (_err) {
+        copyBtn.innerHTML = '<i class="bi bi-x"></i> Failed';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="bi bi-copy"></i> Copy';
+        }, 1400);
+      }
+    });
+  })();
+</script>
+{% endblock %}

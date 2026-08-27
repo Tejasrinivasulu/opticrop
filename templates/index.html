@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block body_class %}dashboard-page{% endblock %}
+{% block title %}OptiCrop – Solution Dashboard{% endblock %}
+{% block description %}AI-powered crop recommendation dashboard that transforms soil and environmental data into intelligent farming decisions.{% endblock %}
+
+{% block content %}
+<section class="hero-section hero-centered">
+  <h1 class="hero-title">
+      From soil signal to <span class="text-gradient">the right crop</span>, in one click.
+    </h1>
+    <p class="hero-description mx-auto">
+      An AI-powered crop recommendation workflow that transforms soil and environmental data into intelligent
+      farming decisions — end to end, transparent, and built for the field.
+    </p>
+    <div class="hero-cta-center">
+      <a href="{{ url_for('workflow') }}" class="btn btn-hero-primary btn-lg rounded-pill px-5">
+        🌾 Start Crop Prediction <i class="bi bi-arrow-right ms-1"></i>
+    </a>
+  </div>
+</section>
+
+<div class="container page-content">
+  <section class="features-section" aria-labelledby="features-heading">
+    <div class="features-header text-center">
+      <h2 id="features-heading" class="features-title">
+        Why teams choose <span class="text-gradient">OptiCrop</span>
+      </h2>
+    </div>
+
+    <div class="row g-4 g-lg-5">
+      {% set features = [
+        ('bi-flower1', 'Better Productivity', 'Grow the right crop in the right soil for peak output.'),
+        ('bi-wallet2', 'Higher Farmer Income', 'Data-backed choices lift margins season after season.'),
+        ('bi-tree-fill', 'Sustainable Agriculture', 'Balance yield with soil health and long-term resilience.'),
+        ('bi-graph-up', 'Scientific Decision Making', 'Replace guesswork with measurable, repeatable insight.'),
+        ('bi-lightning-charge', 'Faster Crop Prediction', 'Recommendations in under a second, from any device.'),
+        ('bi-cpu', 'AI Powered Farming', 'A Random Forest model tuned on 22 crops and 2,200 samples.')
+      ] %}
+      {% for icon, title, desc in features %}
+      <div class="col-md-6 col-lg-4">
+        <article class="feature-card h-100">
+          <div class="feature-icon" aria-hidden="true">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <h3 class="feature-title">{{ title }}</h3>
+          <p class="feature-desc">{{ desc }}</p>
+        </article>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

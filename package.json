@@ -1,0 +1,9 @@
+{
+  "name": "opticrop-flask",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NPM wrapper for OptiCrop Flask app",
+  "scripts": {
+    "dev": "node scripts/dev.js"
+  }
+}

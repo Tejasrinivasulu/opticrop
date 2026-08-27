@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Start Crop Prediction · OptiCrop{% endblock %}
+{% block description %}Enter your soil and climate readings to receive an AI-recommended crop.{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-lg-5">
+  <a href="{{ url_for('workflow') }}" class="btn btn-link text-success text-decoration-none mb-3 px-0">
+    <i class="bi bi-arrow-left"></i> Back to workflow
+  </a>
+
+  <div class="row g-4">
+    <div class="col-lg-{% if result %}5{% else %}7{% endif %} mx-auto">
+      <div class="glass-card p-4 p-md-5">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="icon-box">🌾</div>
+          <div>
+            <h1 class="h3 fw-bold mb-1">Start Crop Prediction</h1>
+            <p class="text-muted small mb-0">Enter a quick soil + climate reading.</p>
+          </div>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if not model_ready %}
+        <div class="alert alert-warning" role="alert">
+          ML model not found. Run <code>python train_model.py</code> first.
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('prediction') }}" novalidate>
+          <div class="row g-3">
+            {% set fields = [
+              ('N', 'Nitrogen (N)', 'kg/ha', '90'),
+              ('P', 'Phosphorous (P)', 'kg/ha', '42'),
+              ('K', 'Potassium (K)', 'kg/ha', '43'),
+              ('temperature', 'Temperature', '°C', '25'),
+              ('humidity', 'Humidity', '%', '80'),
+              ('ph', 'Soil pH', '', '6.5'),
+              ('rainfall', 'Rainfall', 'mm', '200')
+            ] %}
+            {% for key, label, unit, sample in fields %}
+            <div class="col-sm-6">
+              <label class="form-label fw-semibold small" for="{{ key }}">{{ label }}</label>
+              <div class="input-group">
+                <input type="number" step="any" class="form-control" id="{{ key }}" name="{{ key }}"
+                       value="{{ form_data.get(key, '') }}" placeholder="{{ sample }}" required>
+                {% if unit %}
+                <span class="input-group-text text-muted small">{{ unit }}</span>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow-glow" {% if not model_ready %}disabled{% endif %}>
+                <i class="bi bi-stars"></i> Predict best crop
+              </button>
+              <p class="text-center text-muted small mt-2 mb-0">
+                Powered by Flask + Random Forest (scikit-learn)
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if result %}
+    <div class="col-lg-7">
+      <div class="result-card glass-card p-4 p-md-5 mb-4">
+        <div class="text-center mb-4">
+          <div class="result-emoji">🌾</div>
+          <h2 class="display-6 fw-bold text-success mb-1">{{ result.crop }}</h2>
+          <p class="text-muted">Recommended crop · {{ result.confidence }}% confidence · {{ result.prediction_time_ms }} ms</p>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6 col-md-3">
+            <div class="metric-box">
+              <span class="metric-label">Season</span>
+              <span class="metric-value">{{ result.season }}</span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="metric-box">
+              <span class="metric-label">Water Req.</span>
+              <span class="metric-value">{{ result.water }}</span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="metric-box">
+              <span class="metric-label">Soil</span>
+              <span class="metric-value small">{{ result.soil }}</span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="metric-box">
+              <span class="metric-label">Expected Yield</span>
+              <span class="metric-value small">{{ result.expected_yield }}</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-muted">{{ result.description }}</p>
+      </div>
+
+      <div class="glass-card p-4 mb-4">
+        <h3 class="h6 fw-bold text-success text-uppercase">Soil &amp; Climate Analysis</h3>
+        {% for item in result.analysis %}
+        <div class="analysis-row">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>{{ item.label }}</span>
+            <span class="fw-semibold">{{ item.status }}</span>
+          </div>
+          <div class="progress analysis-bar" style="--pct: {{ item.pct }}%">
+            <div class="progress-bar bg-success" role="progressbar"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if result.alternatives %}
+      <div class="glass-card p-4">
+        <h3 class="h6 fw-bold text-success text-uppercase">Alternative Crops</h3>
+        <ul class="list-unstyled mb-0">
+          {% for alt in result.alternatives %}
+          <li class="d-flex justify-content-between py-2 border-bottom">
+            <span>{{ alt.crop }}</span>
+            <span class="text-muted">{{ alt.confidence }}%</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

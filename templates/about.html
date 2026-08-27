@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}About OptiCrop{% endblock %}
+{% block description %}OptiCrop – Smart Agricultural Production Optimization Engine. AI and ML powered crop recommendations for farmers.{% endblock %}
+
+{% block content %}
+<div class="about-page">
+  <div class="container about-wrap py-4 py-lg-5">
+
+    <header class="about-page-heading text-center">
+      <h1 class="about-page-title">Smart Agricultural Production Optimization Engine</h1>
+    </header>
+
+    <div class="about-stats-strip">
+      <div class="about-stat-chip">
+        <i class="bi bi-graph-up-arrow"></i>
+        <div>
+          <strong>{% if model_metrics.accuracy %}{{ model_metrics.accuracy }}%{% else %}99%+{% endif %}</strong>
+          <span>Accuracy</span>
+        </div>
+      </div>
+      <div class="about-stat-chip">
+        <i class="bi bi-flower1"></i>
+        <div>
+          <strong>{{ model_metrics.num_crops or 22 }}</strong>
+          <span>Crop Types</span>
+        </div>
+      </div>
+      <div class="about-stat-chip">
+        <i class="bi bi-database"></i>
+        <div>
+          <strong>{{ model_metrics.total_samples or 2200 }}</strong>
+          <span>Samples</span>
+        </div>
+      </div>
+      <div class="about-stat-chip">
+        <i class="bi bi-sliders"></i>
+        <div>
+          <strong>7</strong>
+          <span>Parameters</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="about-block">
+      <div class="about-card about-card-split">
+        <div class="about-card-visual">
+          <span class="about-card-visual-emoji">🌱</span>
+          <p class="about-card-visual-label">What is OptiCrop?</p>
+        </div>
+        <div class="about-card-body">
+          <h2>Intelligent crop selection for modern agriculture</h2>
+          <p>
+            <strong>OptiCrop – Smart Agricultural Production Optimization Engine</strong> is an Artificial Intelligence (AI)
+            and Machine Learning (ML) based web application designed to help farmers make informed crop selection decisions.
+            The platform analyzes soil nutrient levels and environmental conditions to recommend the most suitable crops for cultivation.
+          </p>
+          <p class="mb-0">
+            By leveraging data-driven insights, OptiCrop minimizes the risk of incorrect crop selection, improves agricultural
+            productivity, and supports sustainable farming practices.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-block">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <article class="about-card about-card-mission">
+            <div class="about-card-icon-wrap mission">
+              <i class="bi bi-bullseye"></i>
+            </div>
+            <h3>Our Mission</h3>
+            <p>
+              To empower farmers with intelligent, data-driven crop recommendations that improve productivity,
+              reduce farming risks, and promote sustainable agriculture.
+            </p>
+          </article>
+        </div>
+        <div class="col-md-6">
+          <article class="about-card about-card-vision">
+            <div class="about-card-icon-wrap vision">
+              <i class="bi bi-eye"></i>
+            </div>
+            <h3>Our Vision</h3>
+            <p>
+              To become a reliable AI-powered agricultural decision support platform that enables farmers,
+              researchers, and agricultural organizations to make smarter and more sustainable farming decisions.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-block">
+      <div class="about-section-label">
+        <span class="about-section-tag warning">Challenge</span>
+        <h2>Problem We Solve</h2>
+        <p>Why traditional crop selection falls short for today's farmers</p>
+      </div>
+      <p class="about-lead-text">
+        Many farmers rely on traditional farming knowledge or personal experience when choosing crops. This often results in:
+      </p>
+      <div class="row g-3">
+        {% for problem in [
+          ('bi-x-circle', 'Wrong crop selection'),
+          ('bi-graph-down', 'Low crop productivity'),
+          ('bi-droplet', 'Excessive fertilizer usage'),
+          ('bi-cash-stack', 'Increased cultivation costs'),
+          ('bi-exclamation-triangle', 'Financial losses'),
+          ('bi-funnel', 'Poor resource utilization')
+        ] %}
+        <div class="col-sm-6 col-lg-4">
+          <div class="about-problem-card">
+            <span class="about-problem-icon"><i class="bi {{ problem[0] }}"></i></span>
+            <span>{{ problem[1] }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="about-block about-io-block mb-0">
+      <div class="about-section-label text-center">
+        <h2>Input &amp; Output</h2>
+        <p>What the model reads from your field — and what you get back</p>
+      </div>
+
+      <div class="about-io-panel about-io-panel-input">
+        <div class="about-io-panel-head">
+          <span class="about-io-panel-badge input"><i class="bi bi-download"></i> Input</span>
+          <h3>Parameters Analyzed</h3>
+        </div>
+        <div class="about-input-cards">
+          {% for param in [
+            ('N', 'Nitrogen', 'bi-droplet-half', 'Soil nutrient · macronutrient', 'input-n'),
+            ('P', 'Phosphorous', 'bi-droplet', 'Soil nutrient · macronutrient', 'input-p'),
+            ('K', 'Potassium', 'bi-moisture', 'Soil nutrient · macronutrient', 'input-k'),
+            ('°C', 'Temperature', 'bi-thermometer-half', 'Live climate · air temperature', 'input-temp'),
+            ('%', 'Humidity', 'bi-cloud-haze2', 'Live climate · relative humidity', 'input-hum'),
+            ('pH', 'Soil pH', 'bi-bezier2', 'Soil acidity / alkalinity level', 'input-ph'),
+            ('mm', 'Rainfall', 'bi-cloud-rain', 'Live climate · precipitation', 'input-rain')
+          ] %}
+          <article class="about-input-card {{ param[4] }}">
+            <div class="about-input-card-icon"><i class="bi {{ param[2] }}"></i></div>
+            <div class="about-input-card-body">
+              <span class="about-input-card-unit">{{ param[0] }}</span>
+              <h4>{{ param[1] }}</h4>
+              <p>{{ param[3] }}</p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="about-io-flow" aria-hidden="true">
+        <div class="about-io-flow-line"></div>
+        <span class="about-io-flow-icon"><i class="bi bi-arrow-down"></i></span>
+        <div class="about-io-flow-line"></div>
+      </div>
+
+      <div class="about-io-panel about-io-panel-output">
+        <div class="about-io-panel-head">
+          <span class="about-io-panel-badge output"><i class="bi bi-upload"></i> Output</span>
+          <h3>Results Delivered</h3>
+        </div>
+        <div class="about-output-cards">
+          {% for out in [
+            ('bi-flower1', 'Recommended Crop', 'Best-match crop for your field conditions', 'out-crop'),
+            ('bi-bullseye', 'Prediction Confidence', 'ML suitability score for the top recommendation', 'out-conf'),
+            ('bi-calendar3', 'Growing Season', 'Kharif, Rabi, or season best suited to plant', 'out-season'),
+            ('bi-layers', 'Soil Type', 'Ideal soil profile for the recommended crop', 'out-soil'),
+            ('bi-droplet', 'Water Requirement', 'Low, moderate, or high irrigation needs', 'out-water'),
+            ('bi-journal-text', 'Crop Description', 'Overview of the crop and why it fits', 'out-desc'),
+            ('bi-lightbulb', 'Cultivation Guidance', 'Practical growing tips for farmers', 'out-tips')
+          ] %}
+          <article class="about-output-card {{ out[3] }}">
+            <div class="about-output-card-icon"><i class="bi {{ out[0] }}"></i></div>
+            <div>
+              <h4>{{ out[1] }}</h4>
+              <p>{{ out[2] }}</p>
+            </div>
+            <i class="bi bi-check-circle-fill about-output-check"></i>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
