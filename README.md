@@ -27,8 +27,6 @@ Analyze Soil • Fetch Live Weather • Get Crop Insights • Download PDF Repor
 
 OptiCrop is an AI-powered crop recommendation platform that helps farmers and agronomists choose the right crop using soil nutrients (N, P, K, pH), live weather data, and a trained Random Forest model. With a guided prediction wizard, transparent insights, and PDF report export, OptiCrop turns field data into clear, actionable farming decisions.
 
-> ⚠️ **Important:** OptiCrop supports agricultural decision-making and awareness. It does **not** replace professional agronomy advice or local agricultural extension services.
-
 ---
 
 # ✨ Key Features
