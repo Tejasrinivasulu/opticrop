@@ -73,7 +73,6 @@ OptiCrop is an AI-powered crop recommendation platform that helps farmers and ag
 | Deploy | Render / Railway / PythonAnywhere |
 
 </div>
----
 
 # 📂 Project Structure
 
@@ -114,7 +113,6 @@ opticrop-main/
 └── README.md
 ```
 
----
 
 # 🚀 Installation
 
