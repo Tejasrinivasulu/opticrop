@@ -58,6 +58,8 @@ OptiCrop is an AI-powered crop recommendation platform that helps farmers and ag
 
 # 🛠 Technology Stack
 
+<div align="center">
+
 | Category | Technology |
 |------------|------------|
 | Backend | Flask 3 |
@@ -70,6 +72,7 @@ OptiCrop is an AI-powered crop recommendation platform that helps farmers and ag
 | Data Handling | NumPy, Pandas |
 | Deploy | Render / Railway / PythonAnywhere |
 
+</div>
 ---
 
 # 📂 Project Structure
@@ -171,20 +174,6 @@ http://localhost:5000
 
 ---
 
-# 🔑 Sample Prediction Inputs
-
-```text
-N (Nitrogen):        90
-P (Phosphorus):      42
-K (Potassium):       43
-Temperature (°C):    25
-Humidity (%):        80
-pH:                  6.5
-Rainfall (mm):       200
-```
-
----
-
 # 🔄 User Workflow
 
 <div align="center">
@@ -207,45 +196,6 @@ Download PDF Report
 
 </div>
 
----
-
-# 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/predict` | Get crop recommendation |
-| `POST` | `/api/predict/pdf` | Download PDF report |
-| `POST` | `/api/weather/live` | Fetch live weather by coordinates |
-| `GET` | `/api/locations/search` | Search locations |
-| `POST` | `/api/upload-soil` | Parse uploaded soil report |
-| `GET` | `/api/health` | Model status and accuracy |
-
-### Example Predict Payload
-
-```json
-{
-  "N": 90,
-  "P": 42,
-  "K": 43,
-  "temperature": 25,
-  "humidity": 80,
-  "ph": 6.5,
-  "rainfall": 200
-}
-```
-
----
-
-# 🤖 Model Highlights
-
-| Metric | Value |
-|--------|--------|
-| Algorithm | Random Forest Classifier |
-| Accuracy | **99.55%** |
-| Crops Supported | 22 |
-| Training Samples | 2,200 |
-| Estimators | 200 |
-| Features | N, P, K, temperature, humidity, pH, rainfall |
 
 ---
 
@@ -282,20 +232,6 @@ https://railway.app
 `railway.json` is already included.
 
 Automatic deployment supported through GitHub.
-
----
-
-## PythonAnywhere
-
-1. Upload project files  
-2. Install requirements  
-3. Point WSGI to `app.py`
-
----
-
-# 💬 Quote
-
-> “The right crop in the right soil doesn’t just grow better — it changes livelihoods.”
 
 ---
 
