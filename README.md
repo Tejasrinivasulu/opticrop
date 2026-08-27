@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="https://cdn-icons-png.flaticon.com/512/2909/2909763.png" width="120" alt="OptiCrop"/>
-
 # 🌾 OptiCrop
 
 ### AI-Powered Crop Recommendation for Smarter Farming
